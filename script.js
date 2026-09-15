@@ -15,7 +15,7 @@
   const state = {
     theme: "light",
     unit: "c",
-    location: "Dhaka, Bangladesh"
+    location: "Dhaka, Bangladesh",
   };
 
   /* ---------------------------------------------------------
@@ -29,7 +29,7 @@
     themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
     themeToggle.setAttribute(
       "aria-label",
-      theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+      theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
     );
   }
 
@@ -48,6 +48,26 @@
     if (!themeChosenByUser) applyTheme(event.matches ? "dark" : "light");
   });
 
+  /*=============================================*/
+
+  async function fetchWeather(city) {
+    try {
+      const response = await fetch(
+        `/.netlify/functions/functions?city=${city}`,
+      );
+
+      const data = await response.json();
+
+      if (data.cod !== 200) {
+        throw new Error(data.message);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Weather API Error:", error);
+      return null;
+    }
+  }
   /* ---------------------------------------------------------
      Live clock
      --------------------------------------------------------- */
@@ -56,11 +76,13 @@
 
   function renderClock() {
     const now = new Date();
-    clockDay.textContent = now.toLocaleDateString(undefined, { weekday: "long" });
+    clockDay.textContent = now.toLocaleDateString(undefined, {
+      weekday: "long",
+    });
     clockTime.textContent = now.toLocaleTimeString(undefined, {
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
+      hour12: false,
     });
   }
 
@@ -74,7 +96,7 @@
   const unitMenu = $("#unitMenu");
   const unitLabel = $("#unitLabel");
 
-  const toF = (c) => Math.round(c * 9 / 5 + 32);
+  const toF = (c) => Math.round((c * 9) / 5 + 32);
 
   function formatTemp(celsius, style) {
     const value = state.unit === "f" ? toF(celsius) : Math.round(celsius);
@@ -111,7 +133,7 @@
     $$("[role='option']", unitMenu).forEach((option) => {
       option.setAttribute(
         "aria-selected",
-        String($("[data-unit]", option).dataset.unit === state.unit)
+        String($("[data-unit]", option).dataset.unit === state.unit),
       );
     });
     renderTemperatures();
@@ -131,13 +153,20 @@
   const searchInput = $("#searchInput");
   const locationName = $("#locationName");
 
-  searchForm.addEventListener("submit", (event) => {
+  searchForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const query = searchInput.value.trim();
     if (!query) return;
 
-    state.location = query;
-    locationName.textContent = query;
+    const weatherData = await fetchWeather(query);
+
+    if (weatherData) {
+      state.location = weatherData.name;
+
+      locationName.textContent = weatherData.name;
+
+      updateWeatherUI(weatherData);
+    }
     searchInput.value = "";
     searchInput.blur();
   });
@@ -183,7 +212,7 @@
       event.preventDefault();
       forecastList.scrollLeft += event.deltaY;
     },
-    { passive: false }
+    { passive: false },
   );
 
   /* ---------------------------------------------------------
