@@ -51,22 +51,13 @@
   /*=============================================*/
 
   async function fetchWeather(city) {
-    try {
-      const response = await fetch(
-        `/.netlify/functions/functions?city=${city}`,
-      );
+    const response = await fetch(
+      `https://ahooraweather.netlify.app/.netlify/functions/functions?city=${city}`,
+    );
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (data.cod !== 200) {
-        throw new Error(data.message);
-      }
-
-      return data;
-    } catch (error) {
-      console.error("Weather API Error:", error);
-      return null;
-    }
+    return data;
   }
   /* ---------------------------------------------------------
      Live clock
