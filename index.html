@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Weather dashboard with hourly forecast, today's highlights and a 10 day outlook." />
+  <meta name="color-scheme" content="light dark" />
+  <title>Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Reusable icon sprite -->
+  <svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M16.5 16.5 21 21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24">
+      <path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    </symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24">
+      <path d="m6 9.5 6 5.5 6-5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4.6" fill="currentColor"/>
+      <g stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+        <path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"/>
+      </g>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24">
+      <path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.6 8.6 0 1 0 10.2 10.2Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-wind" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M3 9h10.5a2.6 2.6 0 1 0-2.6-2.6"/>
+        <path d="M3 13h13a2.6 2.6 0 1 1-2.6 2.6"/>
+        <path d="M3 17h6"/>
+      </g>
+    </symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24">
+      <path d="M12 3.2c3.4 4 5.6 6.8 5.6 9.6a5.6 5.6 0 1 1-11.2 0c0-2.8 2.2-5.6 5.6-9.6Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-uv" viewBox="0 0 24 24">
+      <circle cx="12" cy="10.5" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M12 2.6v1.8M4.8 10.5H3M21 10.5h-1.8M6.6 5.1 5.3 3.8M17.4 5.1l1.3-1.3"/>
+      </g>
+      <path d="M8.2 18.4v1.6a1.7 1.7 0 0 0 3.4 0v-1.6M13.6 18.4l1.6 3.2 1.6-3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    </symbol>
+    <symbol id="i-sunrise" viewBox="0 0 44 44">
+      <g stroke="#f4b21b" stroke-width="2.6" stroke-linecap="round">
+        <path d="M22 2.5v4M6.4 8.4l2.8 2.8M37.6 8.4l-2.8 2.8M2.5 22h4M37.5 22h4"/>
+      </g>
+      <circle cx="22" cy="21" r="9.5" fill="#f9b81c"/>
+      <path d="M22 26V16m0 0-3.6 3.8M22 16l3.6 3.8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <g stroke="#6fb7e8" stroke-width="2.6" stroke-linecap="round">
+        <path d="M8 34h28M12 40h20"/>
+      </g>
+    </symbol>
+    <symbol id="i-sunset" viewBox="0 0 44 44">
+      <g stroke="#f4b21b" stroke-width="2.6" stroke-linecap="round">
+        <path d="M22 2.5v4M6.4 8.4l2.8 2.8M37.6 8.4l-2.8 2.8M2.5 22h4M37.5 22h4"/>
+      </g>
+      <circle cx="22" cy="21" r="9.5" fill="#f9b81c"/>
+      <path d="M22 16v10m0 0 3.6-3.8M22 26l-3.6-3.8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <g stroke="#6fb7e8" stroke-width="2.6" stroke-linecap="round">
+        <path d="M8 34h28M12 40h20"/>
+      </g>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M12 2 12 17 2.6 22Z" fill="var(--arrow-light)"/>
+      <path d="M12 2 21.4 22 12 17Z" fill="var(--arrow-dark)"/>
+    </symbol>
+  </svg>
+
+  <div class="page">
+    <header class="topbar">
+      <div class="identity">
+        <div class="clock">
+          <span class="clock__day" id="clockDay">Sunday</span>
+          <span class="clock__time" id="clockTime">14:03</span>
+        </div>
+
+        <span class="identity__rule" aria-hidden="true"></span>
+
+        <div class="brand">
+          <span class="brand__logo">
+            <img src="LogoW.png" alt="" width="76" height="76" decoding="async" />
+          </span>
+          <span class="brand__name">
+            <span class="brand__line">Ahoora</span>
+            <span class="brand__line">Naseri</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="topbar__tools">
+        <form class="search" id="searchForm" role="search">
+          <label class="visually-hidden" for="searchInput">Search your location</label>
+          <svg class="search__icon" aria-hidden="true"><use href="#i-search"></use></svg>
+          <input class="search__input" id="searchInput" type="search" name="location"
+                 placeholder="Search your location" autocomplete="off" list="cityList" />
+          <datalist id="cityList">
+            <option value="Dhaka, Bangladesh"></option>
+            <option value="Sanandaj, Iran"></option>
+            <option value="Tokyo, Japan"></option>
+            <option value="Istanbul, Türkiye"></option>
+            <option value="Berlin, Germany"></option>
+            <option value="Toronto, Canada"></option>
+          </datalist>
+        </form>
+
+        <button class="theme-toggle" id="themeToggle" type="button"
+                aria-label="Switch to dark mode" aria-pressed="false">
+          <span class="theme-toggle__knob" aria-hidden="true"></span>
+          <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+            <svg><use href="#i-moon"></use></svg>
+          </span>
+          <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+            <svg><use href="#i-sun"></use></svg>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <div class="column">
+        <!-- Current weather -->
+        <section class="card current" aria-labelledby="currentHeading">
+          <h2 class="visually-hidden" id="currentHeading">Current weather</h2>
+
+          <div class="current__top">
+            <p class="location">
+              <svg class="location__icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+              <span id="locationName">Dhaka, Bangladesh</span>
+            </p>
+
+            <div class="unit">
+              <button class="unit__button" id="unitButton" type="button"
+                      aria-haspopup="listbox" aria-expanded="false">
+                <span id="unitLabel">°C</span>
+                <svg class="unit__chevron" aria-hidden="true"><use href="#i-chevron"></use></svg>
+              </button>
+              <ul class="unit__menu" id="unitMenu" role="listbox" aria-label="Temperature unit" hidden>
+                <li role="option" aria-selected="true"><button type="button" data-unit="c">°C</button></li>
+                <li role="option" aria-selected="false"><button type="button" data-unit="f">°F</button></li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="current__day" id="currentDay">Sunday</p>
+          <p class="current__date" id="currentDate">04 Aug,2024</p>
+
+          <div class="current__body">
+            <span class="current__glyph" id="currentGlyph" role="img" aria-label="Heavy rain">🌧️</span>
+
+            <div class="current__readout">
+              <p class="current__temp" data-temp="28" data-temp-style="unit">28°C</p>
+              <p class="current__temp-low" data-temp="24" data-temp-style="slash">/24°C</p>
+              <p class="current__condition" id="currentCondition">Heavy Rain</p>
+              <p class="current__feels">Feels like <span data-temp="31" data-temp-style="bare">31°</span></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Hourly forecast -->
+        <section class="card hourly" aria-labelledby="hourlyHeading">
+          <h2 class="card__title" id="hourlyHeading">Hourly Forecast</h2>
+
+          <ul class="hourly__list" id="hourlyList">
+            <li class="hour hour--warm">
+              <p class="hour__time">12:00</p>
+              <span class="hour__glyph" role="img" aria-label="Sunny">☀️</span>
+              <p class="hour__temp" data-temp="26" data-temp-style="unit">26°C</p>
+              <svg class="hour__arrow" style="--rot:0deg" aria-hidden="true"><use href="#i-arrow"></use></svg>
+              <p class="hour__wind">3km/h</p>
+            </li>
+            <li class="hour hour--warm">
+              <p class="hour__time">15:00</p>
+              <span class="hour__glyph" role="img" aria-label="Sunny">☀️</span>
+              <p class="hour__temp" data-temp="27" data-temp-style="unit">27°C</p>
+              <svg class="hour__arrow" style="--rot:62deg" aria-hidden="true"><use href="#i-arrow"></use></svg>
+              <p class="hour__wind">2km/h</p>
+            </li>
+            <li class="hour hour--warm">
+              <p class="hour__time">18:00</p>
+              <span class="hour__glyph" role="img" aria-label="Partly cloudy">⛅</span>
+              <p class="hour__temp" data-temp="27" data-temp-style="unit">27°C</p>
+              <svg class="hour__arrow" style="--rot:14deg" aria-hidden="true"><use href="#i-arrow"></use></svg>
+              <p class="hour__wind">2km/h</p>
+            </li>
+            <li class="hour hour--cool">
+              <p class="hour__time">21:00</p>
+              <span class="hour__glyph" role="img" aria-label="Partly cloudy">⛅</span>
+              <p class="hour__temp" data-temp="25" data-temp-style="unit">25°C</p>
+              <svg class="hour__arrow" style="--rot:-56deg" aria-hidden="true"><use href="#i-arrow"></use></svg>
+              <p class="hour__wind">3km/h</p>
+            </li>
+            <li class="hour hour--cool">
+              <p class="hour__time">00:00</p>
+              <span class="hour__glyph" role="img" aria-label="Clear">☀️</span>
+              <p class="hour__temp" data-temp="22" data-temp-style="unit">22°C</p>
+              <svg class="hour__arrow" style="--rot:4deg" aria-hidden="true"><use href="#i-arrow"></use></svg>
+              <p class="hour__wind">3km/h</p>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="column">
+        <!-- Today's highlight -->
+        <section class="card highlight" aria-labelledby="highlightHeading">
+          <h2 class="card__title" id="highlightHeading">Today’s Highlight</h2>
+
+          <div class="highlight__grid">
+            <article class="tile">
+              <p class="tile__label"><svg aria-hidden="true"><use href="#i-wind"></use></svg>Wind Status</p>
+              <p class="tile__value">7.90<span class="tile__unit">km/h</span></p>
+              <p class="tile__note tile__note--end">9:00 AM</p>
+            </article>
+
+            <article class="tile">
+              <p class="tile__label"><svg aria-hidden="true"><use href="#i-drop"></use></svg>Humidity</p>
+              <p class="tile__value">85<span class="tile__unit">%</span></p>
+              <p class="tile__note">Humidity is good</p>
+            </article>
+
+            <article class="tile tile--sun tile--sunrise">
+              <svg class="tile__glyph" role="img" aria-label="Sunrise"><use href="#i-sunrise"></use></svg>
+              <div class="tile__sun-text">
+                <p class="tile__sun-label">Sunrise</p>
+                <p class="tile__sun-value">4:50 AM</p>
+              </div>
+            </article>
+
+            <article class="tile">
+              <p class="tile__label"><svg aria-hidden="true"><use href="#i-uv"></use></svg>UV Index</p>
+              <p class="tile__value">4<span class="tile__unit">UV</span></p>
+              <p class="tile__note">Moderate UV</p>
+            </article>
+
+            <article class="tile">
+              <p class="tile__label"><svg aria-hidden="true"><use href="#i-eye"></use></svg>Visibility</p>
+              <p class="tile__value">5<span class="tile__unit">km</span></p>
+              <p class="tile__note">9:00 AM</p>
+            </article>
+
+            <article class="tile tile--sun tile--sunset">
+              <svg class="tile__glyph" role="img" aria-label="Sunset"><use href="#i-sunset"></use></svg>
+              <div class="tile__sun-text">
+                <p class="tile__sun-label">Sunset</p>
+                <p class="tile__sun-value">6:45 PM</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 10 day forecast -->
+        <section class="card forecast" aria-labelledby="forecastHeading">
+          <h2 class="card__title" id="forecastHeading">10 Day Forecast</h2>
+
+          <ul class="forecast__list" id="forecastList" tabindex="0" aria-label="10 day forecast, scrollable">
+            <li><button class="day is-selected" type="button" data-condition="Heavy Rain" data-glyph="🌧️" data-feels="31" data-low="24" data-day="Sunday" data-date="04 Aug,2024">
+              <span class="day__name">Today</span>
+              <span class="day__glyph" role="img" aria-label="Heavy rain">🌧️</span>
+              <span class="day__temp" data-temp="28" data-temp-style="unit">28°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Partly Cloudy" data-glyph="⛅" data-feels="33" data-low="26" data-day="Monday" data-date="05 Aug,2024">
+              <span class="day__name">Mon</span>
+              <span class="day__glyph" role="img" aria-label="Partly cloudy">⛅</span>
+              <span class="day__temp" data-temp="31" data-temp-style="unit">31°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Light Rain" data-glyph="🌧️" data-feels="29" data-low="23" data-day="Tuesday" data-date="06 Aug,2024">
+              <span class="day__name">Tue</span>
+              <span class="day__glyph" role="img" aria-label="Rain">🌧️</span>
+              <span class="day__temp" data-temp="27" data-temp-style="unit">27°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Thunderstorm" data-glyph="⛈️" data-feels="31" data-low="25" data-day="Wednesday" data-date="07 Aug,2024">
+              <span class="day__name">Wed</span>
+              <span class="day__glyph" role="img" aria-label="Thunderstorm">⛈️</span>
+              <span class="day__temp" data-temp="29" data-temp-style="unit">29°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Partly Cloudy" data-glyph="⛅" data-feels="34" data-low="27" data-day="Thursday" data-date="08 Aug,2024">
+              <span class="day__name">Thu</span>
+              <span class="day__glyph" role="img" aria-label="Partly cloudy">⛅</span>
+              <span class="day__temp" data-temp="32" data-temp-style="unit">32°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Sunny" data-glyph="☀️" data-feels="35" data-low="26" data-day="Friday" data-date="09 Aug,2024">
+              <span class="day__name">Fri</span>
+              <span class="day__glyph" role="img" aria-label="Sunny">☀️</span>
+              <span class="day__temp" data-temp="33" data-temp-style="unit">33°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Cloudy" data-glyph="☁️" data-feels="30" data-low="24" data-day="Saturday" data-date="10 Aug,2024">
+              <span class="day__name">Sat</span>
+              <span class="day__glyph" role="img" aria-label="Cloudy">☁️</span>
+              <span class="day__temp" data-temp="30" data-temp-style="unit">30°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Heavy Rain" data-glyph="🌧️" data-feels="28" data-low="23" data-day="Sunday" data-date="11 Aug,2024">
+              <span class="day__name">Sun</span>
+              <span class="day__glyph" role="img" aria-label="Heavy rain">🌧️</span>
+              <span class="day__temp" data-temp="27" data-temp-style="unit">27°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Light Rain" data-glyph="🌦️" data-feels="29" data-low="24" data-day="Monday" data-date="12 Aug,2024">
+              <span class="day__name">Mon</span>
+              <span class="day__glyph" role="img" aria-label="Light rain">🌦️</span>
+              <span class="day__temp" data-temp="28" data-temp-style="unit">28°C</span>
+            </button></li>
+            <li><button class="day" type="button" data-condition="Partly Cloudy" data-glyph="⛅" data-feels="33" data-low="26" data-day="Tuesday" data-date="13 Aug,2024">
+              <span class="day__name">Tue</span>
+              <span class="day__glyph" role="img" aria-label="Partly cloudy">⛅</span>
+              <span class="day__temp" data-temp="31" data-temp-style="unit">31°C</span>
+            </button></li>
+          </ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
