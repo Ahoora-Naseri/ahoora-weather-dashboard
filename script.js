@@ -182,6 +182,14 @@
   const currentLow = $(".current__temp-low");
   const currentFeels = $(".current__feels [data-temp]");
 
+  function updateWeatherUI(data) {
+    const temp = Math.round(data.main.temp);
+
+    currentTemp.textContent = temp + "°";
+
+    currentCondition.textContent = data.weather[0].description;
+  }
+
   $$(".day").forEach((day) => {
     day.addEventListener("click", () => {
       $$(".day").forEach((other) => {
