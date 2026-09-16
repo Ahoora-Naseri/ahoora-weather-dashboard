@@ -255,8 +255,11 @@
 
   function buildHourlyItem(entry, tz) {
     const li = document.createElement("li");
-    const isWarm = entry.main.temp >= 25;
-    li.className = `hour ${isWarm ? "hour--warm" : "hour--cool"}`;
+    const hour = new Date((entry.dt + tz) * 1000).getUTCHours();
+    // Daytime window (06:00–19:00 local) reads warm/orange, the rest
+    // of the night reads cool/purple — independent of temperature.
+    const isDaytime = hour >= 6 && hour < 19;
+    li.className = `hour ${isDaytime ? "hour--warm" : "hour--cool"}`;
 
     const glyph = GLYPH_BY_CONDITION[entry.weather[0].main] || "🌤️";
     const rotation = entry.wind?.deg ?? 0;
