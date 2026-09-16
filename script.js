@@ -52,10 +52,14 @@
 
   async function fetchWeather(city) {
     const response = await fetch(
-      `https://ahooraweather.netlify.app/.netlify/functions/functions?city=${city}`,
+      `/.netlify/functions/weather?city=${encodeURIComponent(city)}`,
     );
 
     const data = await response.json();
+
+    if (!response.ok || data.cod == 404 || data.cod == 400) {
+      throw new Error(data.message || "City not found");
+    }
 
     return data;
   }
@@ -149,17 +153,23 @@
     const query = searchInput.value.trim();
     if (!query) return;
 
-    const weatherData = await fetchWeather(query);
+    searchInput.disabled = true;
 
-    if (weatherData) {
+    try {
+      const weatherData = await fetchWeather(query);
+
       state.location = weatherData.name;
-
-      locationName.textContent = weatherData.name;
+      locationName.textContent = `${weatherData.name}, ${weatherData.sys.country}`;
 
       updateWeatherUI(weatherData);
+    } catch (error) {
+      locationName.textContent = "شهر پیدا نشد";
+      console.error("Weather fetch failed:", error.message);
+    } finally {
+      searchInput.disabled = false;
+      searchInput.value = "";
+      searchInput.blur();
     }
-    searchInput.value = "";
-    searchInput.blur();
   });
 
   /* ---------------------------------------------------------
@@ -173,12 +183,36 @@
   const currentLow = $(".current__temp-low");
   const currentFeels = $(".current__feels [data-temp]");
 
-  function updateWeatherUI(data) {
-    const temp = Math.round(data.main.temp);
+  const GLYPH_BY_CONDITION = {
+    Clear: "☀️",
+    Clouds: "☁️",
+    Rain: "🌧️",
+    Drizzle: "🌦️",
+    Thunderstorm: "⛈️",
+    Snow: "❄️",
+    Mist: "🌫️",
+    Fog: "🌫️",
+    Haze: "🌫️",
+  };
 
-    currentTemp.textContent = temp + "°";
+  function updateWeatherUI(data) {
+    currentTemp.dataset.temp = data.main.temp;
+    currentLow.dataset.temp = data.main.temp_min;
+    currentFeels.dataset.temp = data.main.feels_like;
 
     currentCondition.textContent = data.weather[0].description;
+    currentGlyph.textContent = GLYPH_BY_CONDITION[data.weather[0].main] || "🌤️";
+    currentGlyph.setAttribute("aria-label", data.weather[0].description);
+
+    const now = new Date();
+    currentDay.textContent = now.toLocaleDateString(undefined, { weekday: "long" });
+    currentDate.textContent = now.toLocaleDateString(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+
+    renderTemperatures();
   }
 
   $$(".day").forEach((day) => {
